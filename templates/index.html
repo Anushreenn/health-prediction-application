@@ -1,128 +1,3 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Health Prediction Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
-    <div class="container my-5">
-        <h2 class="mb-4 text-center text-primary">Patient Health Records Portal</h2>
-        
-        <div class="card mb-4 shadow-sm">
-            <div class="card-header bg-primary text-white"><strong>+ Add New Patient Diagnostic Record</strong></div>
-            <div class="card-body">
-                <form action="/patient/add" method="POST">
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <label class="form-label">Full Name</label>
-                            <input type="text" name="full_name" class="form-control" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Date of Birth</label>
-                            <input type="date" name="dob" class="form-control" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Email</label>
-                            <input type="email" name="email" class="form-control" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Glucose (mg/dL)</label>
-                            <input type="number" step="0.1" name="glucose" class="form-control" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Haemoglobin (g/dL)</label>
-                            <input type="number" step="0.1" name="haemoglobin" class="form-control" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Cholesterol (mg/dL)</label>
-                            <input type="number" step="0.1" name="cholesterol" class="form-control" required>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-success mt-3 w-100">Submit to Core Engine & Analyze via AI</button>
-                </form>
-            </div>
-        </div>
-
-        <div class="card shadow-sm">
-            <div class="card-header bg-dark text-white"><strong>Active Patient Records</strong></div>
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-secondary">
-                        <tr>
-                            <th>Name</th>
-                            <th>DOB</th>
-                            <th>Email</th>
-                            <th>Glucose</th>
-                            <th>Haemoglobin</th>
-                            <th>Cholesterol</th>
-                            <th style="width: 30%;">Remarks (AI Generated)</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for patient in patients %}
-                        <tr>
-                            <td>{{ patient.full_name }}</td>
-                            <td>{{ patient.dob }}</td>
-                            <td>{{ patient.email }}</td>
-                            <td><span class="badge bg-info text-dark">{{ patient.glucose }}</span></td>
-                            <td><span class="badge bg-warning text-dark">{{ patient.haemoglobin }}</span></td>
-                            <td><span class="badge bg-danger">{{ patient.cholesterol }}</span></td>
-                            <td><small class="text-muted">{{ patient.remarks }}</small></td>
-                            <td>
-                                <div class="btn-group btn-group-sm">
-                                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ patient.id }}">Edit</button>
-                                    <a href="/patient/delete/{{ patient.id }}" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to delete this record?');">Delete</a>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <div class="modal fade" id="editModal{{ patient.id }}" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                                    <form action="/patient/update/{{ patient.id }}" method="POST">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Edit Record: {{ patient.full_name }}</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="row g-3">
-                                                <div class="col-md-6"><label class="form-label">Full Name</label><input type="text" name="full_name" value="{{ patient.full_name }}" class="form-control" required></div>
-                                                <div class="col-md-6"><label class="form-label">Date of Birth</label><input type="date" name="dob" value="{{ patient.dob }}" class="form-control" required></div>
-                                                <div class="col-md-6"><label class="form-label">Email</label><input type="email" name="email" value="{{ patient.email }}" class="form-control" required></div>
-                                                <div class="col-md-6"><label class="form-label">Glucose</label><input type="number" step="0.1" name="glucose" value="{{ patient.glucose }}" class="form-control" required></div>
-                                                <div class="col-md-6"><label class="form-label">Haemoglobin</label><input type="number" step="0.1" name="haemoglobin" value="{{ patient.haemoglobin }}" class="form-control" required></div>
-                                                <div class="col-md-6"><label class="form-label">Cholesterol</label><input type="number" step="0.1" name="cholesterol" value="{{ patient.cholesterol }}" class="form-control" required></div>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                            <button type="submit" class="btn btn-primary">Save Changes</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                        {% if not patients %}
-                        <tr>
-                            <td colspan="8" class="text-center p-4 text-muted">No records found. Add a patient profile above to trigger system pipeline.</td>
-                        </tr>
-                        {% endif %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html> -->
-
-
-
-
 
 
 <!DOCTYPE html>
@@ -132,15 +7,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Health Prediction Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .error-message {
+            font-size: 0.85rem;
+            color: #dc3545;
+            margin-top: 4px;
+            display: none;
+        }
+    </style>
 </head>
 <body class="bg-light">
     <div class="container my-5">
         <h2 class="mb-4 text-center text-primary">Patient Health Records Portal</h2>
         
+        <div id="globalFormAlert" class="alert alert-danger d-none shadow-sm" role="alert"></div>
+        
         <div class="card mb-4 shadow-sm">
             <div class="card-header bg-primary text-white"><strong>+ Add New Patient Diagnostic Record</strong></div>
             <div class="card-body">
-                <form action="/patient/add" method="POST">
+                <form id="addPatientForm" novalidate>
                     <div class="row g-3">
                         <div class="col-md-4">
                             <label class="form-label">Full Name</label>
@@ -148,11 +34,13 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Date of Birth</label>
-                            <input type="date" name="dob" class="form-control" required>
+                            <input type="text" id="add_dob" name="dob" class="form-control" placeholder="DD/MM/YYYY" maxlength="10" autocomplete="off" required>
+                            <div id="add_dob_error" class="error-message">Please use a valid DD/MM/YYYY format.</div>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Email</label>
-                            <input type="email" name="email" class="form-control" required>
+                            <input type="email" id="add_email" name="email" class="form-control" required>
+                            <div id="add_email_error" class="error-message">Invalid email format or duplicate email found.</div>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Glucose (mg/dL)</label>
@@ -179,7 +67,7 @@
                     <thead class="table-secondary">
                         <tr>
                             <th>Name</th>
-                            <th>DOB</th>
+                            <th>DOB (DD/MM/YYYY)</th>
                             <th>Email</th>
                             <th>Glucose</th>
                             <th>Haemoglobin</th>
@@ -192,7 +80,7 @@
                         {% for patient in patients %}
                         <tr>
                             <td>{{ patient.name }}</td>
-                            <td>{{ patient.dob }}</td>
+                            <td><strong>{{ patient.dob }}</strong></td>
                             <td>{{ patient.email }}</td>
                             <td><span class="badge bg-info text-dark">{{ patient.glucose }}</span></td>
                             <td><span class="badge bg-warning text-dark">{{ patient.haemoglobin }}</span></td>
@@ -205,33 +93,6 @@
                                 </div>
                             </td>
                         </tr>
-
-                        <div class="modal fade" id="editModal{{ patient.id }}" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                                    <form action="/patient/update/{{ patient.id }}" method="POST">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Edit Record: {{ patient.name }}</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="row g-3">
-                                                <div class="col-md-6"><label class="form-label">Full Name</label><input type="text" name="full_name" value="{{ patient.name }}" class="form-control" required></div>
-                                                <div class="col-md-6"><label class="form-label">Date of Birth</label><input type="date" name="dob" value="{{ patient.dob }}" class="form-control" required></div>
-                                                <div class="col-md-6"><label class="form-label">Email</label><input type="email" name="email" value="{{ patient.email }}" class="form-control" required></div>
-                                                <div class="col-md-6"><label class="form-label">Glucose</label><input type="number" step="0.1" name="glucose" value="{{ patient.glucose }}" class="form-control" required></div>
-                                                <div class="col-md-6"><label class="form-label">Haemoglobin</label><input type="number" step="0.1" name="haemoglobin" value="{{ patient.haemoglobin }}" class="form-control" required></div>
-                                                <div class="col-md-6"><label class="form-label">Cholesterol</label><input type="number" step="0.1" name="cholesterol" value="{{ patient.cholesterol }}" class="form-control" required></div>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                            <button type="submit" class="btn btn-primary">Save Changes</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
                         {% endfor %}
                         
                         {% if not patients %}
@@ -244,6 +105,270 @@
             </div>
         </div>
     </div>
+
+    {% for patient in patients %}
+    <div class="modal fade" id="editModal{{ patient.id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form class="editPatientForm" data-patient-id="{{ patient.id }}" novalidate>
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Record: {{ patient.name }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger d-none modal-alert" role="alert"></div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" name="full_name" value="{{ patient.name }}" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Date of Birth</label>
+                                <input type="text" name="dob" value="{{ patient.dob }}" class="form-control edit-dob-picker" placeholder="DD/MM/YYYY" maxlength="10" autocomplete="off" required>
+                                <div class="error-message edit-dob-error">Please use a valid DD/MM/YYYY format.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" name="email" value="{{ patient.email }}" class="form-control edit-email" required>
+                                <div class="error-message edit-email-error">Invalid or duplicate email layout tracked.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Glucose</label>
+                                <input type="number" step="0.1" name="glucose" value="{{ patient.glucose }}" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Haemoglobin</label>
+                                <input type="number" step="0.1" name="haemoglobin" value="{{ patient.haemoglobin }}" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Cholesterol</label>
+                                <input type="number" step="0.1" name="cholesterol" value="{{ patient.cholesterol }}" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    
+    <script>
+        // 1. Slashing Input Mask (DD/MM/YYYY)
+        function applyDateMask(inputElement) {
+            // Pre-populate raw typing tag tracking if element initializes with an existing value
+            if(inputElement.value) {
+                inputElement.setAttribute("data-raw-typed", inputElement.value);
+            }
+
+            inputElement.addEventListener("input", function(e) {
+                let input = e.target.value.replace(/\D/g, "");
+                if (input.length > 8) input = input.substring(0, 8);
+                
+                let formatted = "";
+                if (input.length > 0) {
+                    formatted = input.substring(0, 2);
+                    if (input.length > 2) {
+                        formatted += "/" + input.substring(2, 4);
+                        if (input.length > 4) {
+                            formatted += "/" + input.substring(4, 8);
+                        }
+                    }
+                }
+                e.target.value = formatted;
+                e.target.setAttribute("data-raw-typed", formatted);
+            });
+
+            inputElement.addEventListener("blur", function(e) {
+                const typed = e.target.getAttribute("data-raw-typed");
+                if (typed) {
+                    e.target.value = typed;
+                }
+            });
+        }
+
+        // 2. Strict Date Validation Parser Logic
+        function parseAndConvertDate(dateStr) {
+            if (!dateStr || dateStr.length !== 10) return null;
+            const parts = dateStr.split("/");
+            if (parts.length !== 3) return null;
+            
+            const day = parseInt(parts[0], 10);
+            const month = parseInt(parts[1], 10);
+            const year = parseInt(parts[2], 10);
+            
+            if (!day || !month || !year || year < 1900 || month > 12 || month < 1 || day < 1 || day > 31) {
+                return null;
+            }
+            
+            const testDate = new Date(year, month - 1, day);
+            if (testDate.getFullYear() !== year || testDate.getMonth() !== (month - 1) || testDate.getDate() !== day) {
+                return null; 
+            }
+            
+            if (testDate > new Date()) return "FUTURE";
+
+            const mmString = month < 10 ? "0" + month : month;
+            const ddString = day < 10 ? "0" + day : day;
+            return `${year}-${mmString}-${ddString}`;
+        }
+
+        // 3. Flatpickr Options Configuration Block
+        const flatpickrConfig = {
+            dateFormat: "d/m/Y",       
+            maxDate: "today",          
+            allowInput: true,
+            onReady: function(selectedDates, dateStr, instance) {
+                instance.input.removeEventListener("keydown", instance._input.keydown);
+            },
+            onValueUpdate: function(selectedDates, dateStr, instance) {
+                const typed = instance.input.getAttribute("data-raw-typed");
+                if (typed && typed.length > 0) {
+                    instance.input.value = typed;
+                }
+            }
+        };
+
+        // Initialize pickers across elements safely
+        const addDobPicker = flatpickr("#add_dob", flatpickrConfig);
+
+        document.querySelectorAll(".edit-dob-picker").forEach(inputElement => {
+            flatpickr(inputElement, flatpickrConfig);
+        });
+
+        // Apply input format masking rules to both views
+        applyDateMask(document.getElementById("add_dob"));
+        document.querySelectorAll(".edit-dob-picker").forEach(applyDateMask);
+
+        // Add Patient Submission Handling Pipeline
+        document.getElementById("addPatientForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            
+            document.getElementById("add_dob_error").style.display = "none";
+            document.getElementById("add_email_error").style.display = "none";
+            const globalAlert = document.getElementById("globalFormAlert");
+            globalAlert.classList.add("d-none");
+
+            const rawDobValue = document.getElementById("add_dob").value;
+            const convertedIsoDate = parseAndConvertDate(rawDobValue);
+
+            if (!convertedIsoDate) {
+                const dobErr = document.getElementById("add_dob_error");
+                dobErr.innerText = "Please provide a valid date matching DD/MM/YYYY calendar layouts";
+                dobErr.style.display = "block";
+                return;
+            } else if (convertedIsoDate === "FUTURE") {
+                const dobErr = document.getElementById("add_dob_error");
+                dobErr.innerText = "Date validation exception: Birthdates cannot exist in the future.";
+                dobErr.style.display = "block";
+                return;
+            }
+
+            const formData = new FormData(this);
+            const searchParams = new URLSearchParams();
+            for (const pair of formData.entries()) {
+                if (pair[0] === "dob") {
+                    searchParams.append("dob", convertedIsoDate);
+                } else {
+                    searchParams.append(pair[0], pair[1]);
+                }
+            }
+
+            const response = await fetch("/patient/add", { 
+                method: "POST", 
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: searchParams 
+            });
+            
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                const data = await response.json();
+                const errMessage = data.detail || "Validation engine failure.";
+                
+                if (errMessage.toLowerCase().includes("email")) {
+                    const emailErr = document.getElementById("add_email_error");
+                    emailErr.innerText = errMessage;
+                    emailErr.style.display = "block";
+                } else if (errMessage.toLowerCase().includes("future") || errMessage.toLowerCase().includes("date")) {
+                    const dobErr = document.getElementById("add_dob_error");
+                    dobErr.innerText = errMessage;
+                    dobErr.style.display = "block";
+                } else {
+                    globalAlert.innerText = errMessage;
+                    globalAlert.classList.remove("d-none");
+                }
+            }
+        });
+
+        // Edit Patients Submission Lifecycle
+        document.querySelectorAll(".editPatientForm").forEach(form => {
+            form.addEventListener("submit", async function(e) {
+                e.preventDefault();
+                const pId = this.getAttribute("data-patient-id");
+                
+                const dobErr = this.querySelector(".edit-dob-error");
+                const emailErr = this.querySelector(".edit-email-error");
+                const modalAlert = this.querySelector(".modal-alert");
+                
+                dobErr.style.display = "none";
+                emailErr.style.display = "none";
+                modalAlert.classList.add("d-none");
+
+                const rawDobValue = this.querySelector(".edit-dob-picker").value;
+                const convertedIsoDate = parseAndConvertDate(rawDobValue);
+
+                if (!convertedIsoDate) {
+                    dobErr.innerText = "Please provide a valid date matching DD/MM/YYYY calendar layouts.";
+                    dobErr.style.display = "block";
+                    return;
+                } else if (convertedIsoDate === "FUTURE") {
+                    dobErr.innerText = "Date validation exception: Birthdates cannot exist in the future.";
+                    dobErr.style.display = "block";
+                    return;
+                }
+
+                const formData = new FormData(this);
+                const searchParams = new URLSearchParams();
+                for (const pair of formData.entries()) {
+                    if (pair[0] === "dob") {
+                        searchParams.append("dob", convertedIsoDate);
+                    } else {
+                        searchParams.append(pair[0], pair[1]);
+                    }
+                }
+
+                const response = await fetch(`/patient/update/${pId}`, { 
+                    method: "POST", 
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: searchParams 
+                });
+
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    const data = await response.json();
+                    const errMessage = data.detail || "System update handling failure.";
+                    
+                    if (errMessage.toLowerCase().includes("email")) {
+                        emailErr.innerText = errMessage;
+                        emailErr.style.display = "block";
+                    } else if (errMessage.toLowerCase().includes("future") || errMessage.toLowerCase().includes("date")) {
+                        dobErr.innerText = errMessage;
+                        dobErr.style.display = "block";
+                    } else {
+                        modalAlert.innerText = errMessage;
+                        modalAlert.classList.remove("d-none");
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>
